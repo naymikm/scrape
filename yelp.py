@@ -5,41 +5,44 @@ from time import sleep
 import subprocess
 
 subprocess.call( "echo '#Each scrape = 10\nInitializing...\n' > log.txt",shell=True )
-print('Initializing scraper...')
-with open('/home/naymikm/scrape/csv/VB_contractors.csv','w') as out:
-    #phoneBook = {}
-    page = 0
-    total = 0
-    while page <= 99:
-        sleep(randint(5,30))
-        html = urlopen("http://www.yelp.com/search?find_desc=Contractors&find_loc=Virginia+Beach&start="+str(page*10))
-        bsobj = BeautifulSoup(html,'html5lib')
-    
-        bizHits = bsobj.findAll('li', {'class':'regular-search-result'})
-       
-        if bizHits == []:
-            subprocess.call("echo '\nAll pages exhausted xD' >> log.txt",shell=True)
-            exit(0)
-        else:
-            for hit in bizHits:
-                bizName = hit.find('span',{'class':'indexed-biz-name'}).find('span')
-                bizNameText = bizName.text.encode('ascii','ignore').replace(',','')
+
+for city in ['Philadelphia','Baltimore','Tampa+Bay']:
+
+    print('City:\t'+city)
+    with open('/home/naymikm/scrape/csv/'+city.replace('+','_')+'_contractors.csv','w') as out:
+        #phoneBook = {}
+        page = 0
+        total = 0
+        while page <= 99:
+            sleep(randint(5,60))
+            html = urlopen("http://www.yelp.com/search?find_desc=Contractors&find_loc="+city+"&start="+str(page*10))
+            bsobj = BeautifulSoup(html,'html5lib')
+        
+            bizHits = bsobj.findAll('li', {'class':'regular-search-result'})
+           
+            if bizHits == []:
+                subprocess.call("echo '\nAll pages exhausted xD' >> log.txt",shell=True)
+                exit(0)
+            else:
+                for hit in bizHits:
+                    bizName = hit.find('span',{'class':'indexed-biz-name'}).find('span')
+                    bizNameText = bizName.text.encode('ascii','ignore').replace(',','')
+                    
+                    bizNum = hit.find('div', {'class': 'secondary-attributes'}).find('span', {'class': 'biz-phone'})
+                    bizNumText = bizNum.text.strip().encode('ascii', 'ignore')
+                    
+                    #phoneBook[bizName] = bizNum
+                    #print(type(bizName))
+                    #print(type(bizNum)) 
+                    if len(bizNumText) > 1:
+                        out.write(bizNameText+','+bizNumText+'\n')
+                        total += 1
+                    else:
+                        continue
                 
-                bizNum = hit.find('div', {'class': 'secondary-attributes'}).find('span', {'class': 'biz-phone'})
-                bizNumText = bizNum.text.strip().encode('ascii', 'ignore')
-                
-                #phoneBook[bizName] = bizNum
-                #print(type(bizName))
-                #print(type(bizNum)) 
-                if len(bizNumText) > 1:
-                    out.write(bizNameText+','+bizNumText+'\n')
-                    total += 1
-                else:
-                    continue
-            
-            subprocess.call( "echo 'scraped' >> log.txt",shell=True )
-            page += 1
-    
+                subprocess.call( "echo 'scraped' >> log.txt",shell=True )
+                page += 1
+    sleep(randint(60,120)*60)
 print('Done!')
         
         
