@@ -6,7 +6,7 @@ import subprocess
 
 subprocess.call( "echo '#Each scrape = 10\nInitializing...\n' > log.txt",shell=True )
 
-for city in ['Philadelphia','Baltimore','Tampa+Bay']:
+for city in ['Tampa+Bay']:
 
     print('City:\t'+city)
     with open('/home/naymikm/scrape/csv/'+city.replace('+','_')+'_contractors.csv','w') as out:
@@ -42,7 +42,7 @@ for city in ['Philadelphia','Baltimore','Tampa+Bay']:
                 
                 subprocess.call( "echo 'scraped' >> log.txt",shell=True )
                 page += 1
-    sleep(randint(60,120)*60)
+    #sleep(randint(60,120)*60)
 print('Done!')
         
         

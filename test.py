@@ -6,6 +6,7 @@ html = urlopen("http://www.yelp.com/search?find_desc=Contractors&find_loc=Phoeni
 bsobj = BeautifulSoup(html,'html5lib')
 
 test = bsobj.find('div',{'class':'column column-alpha '}).find('div',{'class':'content'}).\
-find('h3').text
+find('h3')
 
 print(test)
+print(test.text)
